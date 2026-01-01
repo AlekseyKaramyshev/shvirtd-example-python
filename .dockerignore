@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+.dockerignore
+Dockerfile
+node_modules
+.env
+*.log
+__pycache__
+.venv
+target/
