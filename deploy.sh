@@ -12,7 +12,7 @@ function download_project {
     echo "Done downloading project: ${GITHUB_PROJECT_NAME}..."
 }
 
-function check_target_dir {
+function deploy_project {
     echo "Starting project: ${GITHUB_PROJECT_NAME}..."
     /usr/bin/docker compose -f "${TARGET_DIR}/compose.yaml" up -d
     echo "Done starting project: ${GITHUB_PROJECT_NAME}..."
@@ -20,7 +20,7 @@ function check_target_dir {
 
 function main {
     download_project
-    check_target_dir
+    deploy_project
 }
 
 main
