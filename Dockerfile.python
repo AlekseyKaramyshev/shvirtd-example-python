@@ -1,0 +1,14 @@
+FROM python:3.12-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+FROM python:3.12-slim
+WORKDIR /app
+RUN useradd --create-home devuser1
+USER devuser1
+COPY --from=builder /root/.local /home/devuser1/.local
+ENV PATH=/home/devuser1/.local/bin:$PATH
+COPY --chown=devuser1:devuser1 . .
+EXPOSE 5000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
