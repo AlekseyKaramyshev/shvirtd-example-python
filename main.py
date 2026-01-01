@@ -11,32 +11,14 @@ from typing import Optional
 # Считываем конфигурацию БД из переменных окружения
 db_host = os.environ.get('DB_HOST', '127.0.0.1')
 db_user = os.environ.get('DB_USER', 'app')
-db_password = os.environ.get('DB_PASSWORD', 'very_strong')
-db_name = os.environ.get('DB_NAME', 'example')
+db_password = os.environ.get('DB_PASSWORD', 'QwErTy1234')
+db_name = os.environ.get('DB_NAME', 'virtd')
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Код, который выполнится перед запуском приложения
-    print("Приложение запускается...")
-    try:
-        with get_db_connection() as db:
-            cursor = db.cursor()
-            create_table_query = f"""
-            CREATE TABLE IF NOT EXISTS {db_name}.requests (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                request_date DATETIME,
-                request_ip VARCHAR(255)
-            )
-            """
-            cursor.execute(create_table_query)
-            db.commit()
-            print("Соединение с БД установлено и таблица 'requests' готова к работе.")
-            cursor.close()
-    except mysql.connector.Error as err:
-        print(f"Ошибка при подключении к БД или создании таблицы: {err}")
-    
+    print("Приложение запускается...")    
     yield
-    
     # Код, который выполнится при остановке приложения
     print("Приложение останавливается.")
 
@@ -83,6 +65,14 @@ def index(request: Request, ip_address: Optional[str] = Depends(get_client_ip)):
     try:
         with get_db_connection() as db:
             cursor = db.cursor()
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS `{db_name}`.requests (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    request_date DATETIME,
+                    request_ip VARCHAR(255)
+                )
+            """)
+            db.commit()            
             query = "INSERT INTO requests (request_date, request_ip) VALUES (%s, %s)"
             values = (current_time, final_ip)
             cursor.execute(query, values)
